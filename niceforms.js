@@ -15,6 +15,20 @@ var selectMaxHeight = 200;
 var textareaTopPadding = 10;
 var textareaSidePadding = 10;
 
+//Element switcher - switch on/off elements, you don't want to be styled
+var blockedElements = new Array();
+blockedElements['textarea'] = false;
+blockedElements['select'] = false;
+blockedElements['input'] = false;
+blockedElements['button'] = false;
+
+function isBlockedElement(elementName)
+{
+    if( (elementName in blockedElements) && blockedElements[elementName]) {
+        return true;
+    }
+}
+
 //Global Variables
 var NF = new Array();
 var isIE = false;
@@ -64,29 +78,41 @@ function niceform(nf) {
 	nf.add_multiselect = function(obj) {this._multiselect[this._multiselect.length] = obj; multiSelects(obj);}
 	nf.start = function() {
 		//Separate and assign elements
-		var allInputs = this.getElementsByTagName('input');
-		for(var w = 0; w < allInputs.length; w++) {
-			switch(allInputs[w].type) {
-				case "text": case "password": {this.add_inputText(allInputs[w]); break;}
-				case "radio": {this.add_inputRadio(allInputs[w]); break;}
-				case "checkbox": {this.add_inputCheck(allInputs[w]); break;}
-				case "submit": case "reset": case "button": {this.add_inputSubmit(allInputs[w]); break;}
-				case "file": {this.add_inputFile(allInputs[w]); break;}
-			}
-		}
-		var allButtons = this.getElementsByTagName('button');
-		for(var w = 0; w < allButtons.length; w++) {
-			this.add_inputSubmit(allButtons[w]);
-		}
-		var allTextareas = this.getElementsByTagName('textarea');
-		for(var w = 0; w < allTextareas.length; w++) {
-			this.add_textarea(allTextareas[w]);
-		}
-		var allSelects = this.getElementsByTagName('select');
-		for(var w = 0; w < allSelects.length; w++) {
-			if(allSelects[w].size == "1") {this.add_select(allSelects[w]);}
-			else {this.add_multiselect(allSelects[w]);}
-		}
+        if(!isBlockedElement('input'))
+        {
+            var allInputs = this.getElementsByTagName('input');
+            for(var w = 0; w < allInputs.length; w++) {
+                switch(allInputs[w].type) {
+                    case "text": case "password": {this.add_inputText(allInputs[w]); break;}
+                    case "radio": {this.add_inputRadio(allInputs[w]); break;}
+                    case "checkbox": {this.add_inputCheck(allInputs[w]); break;}
+                    case "submit": case "reset": case "button": {this.add_inputSubmit(allInputs[w]); break;}
+                    case "file": {this.add_inputFile(allInputs[w]); break;}
+                }
+            }
+        }
+        if(!isBlockedElement('button'))
+        {
+            var allButtons = this.getElementsByTagName('button');
+            for(var w = 0; w < allButtons.length; w++) {
+                this.add_inputSubmit(allButtons[w]);
+            }
+        }
+        if(!isBlockedElement('textarea'))
+        {
+            var allTextareas = this.getElementsByTagName('textarea');
+            for(var w = 0; w < allTextareas.length; w++) {
+                this.add_textarea(allTextareas[w]);
+            }
+        }
+        if(!isBlockedElement('select'))
+        {
+            var allSelects = this.getElementsByTagName('select');
+            for(var w = 0; w < allSelects.length; w++) {
+                if(allSelects[w].size == "1") {this.add_select(allSelects[w]);}
+                else {this.add_multiselect(allSelects[w]);}
+            }
+        }
 		//Start
 		for(w = 0; w < this._inputText.length; w++) {this._inputText[w].init();}
 		for(w = 0; w < this._inputRadio.length; w++) {this._inputRadio[w].init();}
